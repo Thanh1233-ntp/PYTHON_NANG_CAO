@@ -2,33 +2,29 @@ MỤC TIÊU
   ``` 
                    USER
                      │
-                     │ Upload ảnh
                      ▼
-              ┌──────────────┐
-              │  Streamlit   │
-              └──────┬───────┘
+              Upload hình ảnh
                      │
                      ▼
-              ┌──────────────┐
-              │ImageProcessor│
-              └──────┬───────┘
+             ImageProcessor
                      │
                      ▼
-              ┌──────────────┐
-              │TrashDetector │
-              │     YOLO     │
-              └──────┬───────┘
+              TrashDetector
+                     │
+              ┌──────┴──────┐
+              │             │
+         class/label     confidence
+              │             │
+              └──────┬──────┘
+                     ▼
+              TrashEvaluator
                      │
                      ▼
-              ┌──────────────┐
-              │TrashEvaluator│
-              └──────┬───────┘
+              Kết quả đánh giá
                      │
                      ▼
-              ┌──────────────┐
-              │    Result    │
-              └──────┬───────┘
+                 Streamlit
                      │
                      ▼
-               Streamlit
+              Hiển thị kết quả
 ```
