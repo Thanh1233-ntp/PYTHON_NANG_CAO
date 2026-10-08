@@ -61,7 +61,7 @@ Chạy qua nhiều ảnh khác nhau và kiểm tra:
 
 ---
 
-## 3. Thành viên 2: Đánh giá và chạy thử
+## Thành viên 2: Đánh giá và chạy thử
 
 **File phụ trách:** `modules/trash_evaluator.py`, `modules/data_streamer.py`, `tests/test_evaluator.py`
 
