@@ -1,4 +1,4 @@
-- Mình có phân loại mức độ rác không? Ví dụ không có rác, ít rác, nhiều rác? Bà muốn có nhiêu ảnh? Những ảnh ngoài 3 loại kia ra thì có tải về không?
+- Mình có phân loại mức độ rác không? Ví dụ không có rác, ít rác, nhiều rác? Bà muốn có nhiêu ảnh? Những ảnh ngoài 3 loại kia ra thì có tải về không? Ảnh đơn điệu chỉ chứa một thứ hay ảnh chứa nhiều thứ khác nhau
 
 - Chỉ phân loại 3 loại rác là platic paper metal thôi đúng không? Có cần thêm không, ví dụ như glass cardboard? đề xuất thêm một mục là trash nếu ảnh đó không liên quan gì đến mấy loại trên.
 
