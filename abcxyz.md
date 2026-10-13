@@ -32,24 +32,24 @@ Lưu ý: cần kiểm tra mô hình YOLO hiện tại có hỗ trợ đủ 4 lo�
 
 **3. Nếu một ảnh có nhiều loại rác thì xếp vào đâu?**
 
-Ảnh đó chỉ cần lưu **một lần**, không cần chia vào nhiều thư mục.
+- Ảnh đó chỉ cần lưu **một lần**, không cần chia vào nhiều thư mục.
 
-Ví dụ, một ảnh có chai nhựa, giấy và lon kim loại thì mô hình trả về cả 3 loại trong cùng kết quả. Không xếp ảnh đó vào mục Trash.
+- Ví dụ, một ảnh có chai nhựa, giấy và lon kim loại thì mô hình trả về cả 3 loại trong cùng kết quả. Không xếp ảnh đó vào mục Trash.
 
-Nếu ảnh không chứa 4 loại rác mục tiêu, có thể ghi nhận là “Không phát hiện loại rác mục tiêu”. Chưa cần tạo lớp Trash riêng.
+- Nếu ảnh không chứa 4 loại rác mục tiêu, có thể ghi nhận là “Không phát hiện loại rác mục tiêu”. Chưa cần tạo lớp Trash riêng.
 
 **4. Cách tổ chức thư mục ảnh**
 
-Không cần chia thư mục theo từng loại rác vì một ảnh có thể chứa nhiều loại cùng lúc.
+- Không cần chia thư mục theo từng loại rác vì một ảnh có thể chứa nhiều loại cùng lúc.
 
-Để tất cả ảnh thử nghiệm chung trong thư mục:
+- Để tất cả ảnh thử nghiệm chung trong thư mục:
 
 `data/test_images/`
 
 Ví dụ:
 
-- `image_001.jpg`
-- `image_002.jpg`
-- `image_003.jpg`
+  - `image_001.jpg`
+  - `image_002.jpg`
+  - `image_003.jpg`
 
 Dễ quản lý ảnh và kiểm tra khả năng nhận diện nhiều loại rác trong cùng một ảnh.
