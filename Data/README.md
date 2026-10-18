@@ -13,7 +13,7 @@ Chứa các ảnh đầu vào
 
 Link dataset (chưa xóa hay chỉnh sửa gì hết, còn nguyên):
 - Rác đơn giản: https://www.kaggle.com/datasets/asdasdasasdas/garbage-classification
-+ Nếu cái nào không cần dùng tới thì xóa giúp tôi.
++ Nếu cái nào không cần tới thì xóa giúp tôi.
 + Mấy file txt là đánh số encode phân loại mấy cái rác.
 
 - Rác phức tạp: https://www.kaggle.com/datasets/yashkangale20/garbage-classification
