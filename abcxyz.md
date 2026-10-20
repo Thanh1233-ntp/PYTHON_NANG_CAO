@@ -31,6 +31,7 @@ Trước mắt chưa thêm Cardboard hoặc Trash để tránh làm phạm vi d�
 
 Lưu ý: cần kiểm tra mô hình YOLO hiện tại có hỗ trợ đủ 4 loại không. 
 + Nếu hỗ trợ được thì có muốn làm thêm không? Tôi nghĩ không nên. Nhiều quá train lâu lắm:))
+" KO CẦN ĐÂU "
 
 **3. Nếu một ảnh có nhiều loại rác thì xếp vào đâu?**
 
@@ -41,6 +42,21 @@ Lưu ý: cần kiểm tra mô hình YOLO hiện tại có hỗ trợ đủ 4 lo�
 
 - Nếu ảnh không chứa 4 loại rác mục tiêu, có thể ghi nhận là “Không phát hiện loại rác mục tiêu”. Chưa cần tạo lớp Trash riêng.
 + Là đổi tên của ảnh lại à bà
+
+" TRẢ LỜI 
+
+- **YOLO:** Là mô hình chính thực hiện nhận diện các loại rác trong ảnh.
+- **`image_processor.py`:** Kiểm tra ảnh đầu vào có hợp lệ hay không và xử lý ảnh nếu cần.
+- **`trash_detector.py`:** Kết nối với YOLO, gửi ảnh vào mô hình và lấy kết quả nhận diện.
+- **`trash_evaluator.py`:** Thống kê số lượng từng loại rác và độ tin cậy của kết quả.
+- **`data_streamer.py`:** Sử dụng Generator (`yield`) để đọc lần lượt nhiều ảnh khi thử nghiệm.
+
+**Tóm lại:** YOLO chịu trách nhiệm nhận diện rác; các module có nhiệm vụ hỗ trợ xử lý ảnh, lấy kết quả, thống kê và tổ chức chương trình.
+
+MÔ HÌNH YOLO NẰM TRONG FILE best_model.pt
+Đoạn code test độ nhận diện nằm ở test yolo.ipynb
+"
+
 
 **4. Cách tổ chức thư mục ảnh**
 
