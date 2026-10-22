@@ -1,0 +1,11 @@
+﻿image,expected_class,predicted_classes,expected_class_detected,detection_count,confidences,processing_seconds,annotated_image
+image_0001.jpg,Glass,,False,0,,4.7630,annotated_image_0001.jpg
+image_0363.jpg,Glass,Metal,False,1,0.7330,0.2461,annotated_image_0363.jpg
+image_0726.jpg,Plastic,Plastic; Plastic,True,2,0.6459; 0.3589,0.2121,annotated_image_0726.jpg
+image_1089.jpg,Metal,Metal,True,1,0.9587,0.1710,annotated_image_1089.jpg
+image_1452.jpg,Paper,Paper,True,1,0.9549,0.1592,annotated_image_1452.jpg
+image_1814.jpg,Paper,Paper,True,1,0.9263,0.1540,annotated_image_1814.jpg
+image_2177.jpeg,Paper,Paper; Paper,True,2,0.4793; 0.4602,0.2352,annotated_image_2177.jpeg
+image_2540.jpg,Plastic,Plastic,True,1,0.8605,0.1576,annotated_image_2540.jpg
+image_2903.jpg,Plastic,Plastic; Plastic; Metal; Plastic; Plastic,True,5,0.6965; 0.4162; 0.3740; 0.3272; 0.3240,0.2577,annotated_image_2903.jpg
+image_3266.jpg,Plastic,Plastic,True,1,0.3431,0.2532,annotated_image_3266.jpg

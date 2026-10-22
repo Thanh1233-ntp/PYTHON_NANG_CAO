@@ -1,73 +1,87 @@
-# Báo cáo tiến trình: Thành viên 1 — xử lý ảnh và nhận diện rác
+# Báo cáo hiện trạng: Nhận diện rác bằng YOLO
 
-## Phạm vi và thay đổi
+## Tình trạng hiện tại
 
-- Đã đọc `HƯỚNG DẪN.md`, kiểm tra model, notebook YOLO cũ, cấu trúc module/test và các thư viện được import trong file Python/notebook của dự án.
-- `modules/image_processor.py`: kiểm tra ảnh là `numpy.ndarray` có 3 chiều và kích thước khác 0; xử lý ảnh về khung vuông 640×640 bằng nearest-neighbor, giữ nguyên tỷ lệ và thêm viền màu 114 (letterbox). Cải tiến này tránh kéo méo ảnh khi đưa ảnh ngang/dọc về đầu vào vuông.
-- `modules/trash_detector.py`: báo lỗi rõ ràng nếu model không tồn tại; tải model YOLO được truyền vào; duyệt mọi kết quả và mọi bounding box; trả `class_name`, confidence dạng `float` và bbox bốn tọa độ dạng `float`. Kết quả không có box trả về `[]`; tắt log lặp của YOLO khi dự đoán.
-- `tests/test_detector.py`: kiểm tra đầu vào sai/đúng, letterbox ảnh nhỏ và lớn, nhiều box, không có detection và thiếu model.
-- Tạo `visualize_detections.ipynb`: chọn đều tối đa 10 ảnh, chạy model, hiển thị ảnh gốc cạnh ảnh đã letterbox/vẽ box, lưu ảnh minh họa và CSV.
-- Tạo `requirements.txt` với dependency trực tiếp cần cho module, notebook và test; các thư viện chuẩn Python không cần liệt kê.
+- Notebook `results/visualize_detections.ipynb` đã chạy được; lỗi môi trường và import `cv2` trước đây không còn là vấn đề theo xác nhận hiện tại.
+- Model đang dùng: `models/best_model.pt`, có 5 nhãn: `Glass`, `Metal`, `Paper`, `Plastic`, `Waste`.
+- Lỗi còn lại là độ chính xác phân loại/phát hiện của model. Trọng số model chưa được huấn luyện lại.
+- Đã bổ sung cấu hình suy luận cho `TrashDetector`: ngưỡng confidence mặc định `0.25`, kích thước ảnh `640`; có thể đổi khi khởi tạo detector.
+- Khi suy luận, nên đưa ảnh gốc trực tiếp vào YOLO để model tự resize/letterbox, thay vì giảm ảnh trước bằng phép nearest-neighbor của `ImageProcessor`.
 
-## Chạy thử thực tế
+## Kiểm tra trên 10 ảnh có nhãn tham chiếu
 
-- Model: `models/best_model.pt`; YOLO load thành công. Model khai báo 5 nhãn: `Glass`, `Metal`, `Paper`, `Plastic`, `Waste`.
-- Trong thư mục thử nghiệm có **3.266 ảnh** với phần mở rộng ảnh được hỗ trợ. Notebook chạy một mẫu gồm 10 ảnh lấy đều từ đầu đến cuối danh sách, trên CPU (CUDA không khả dụng).
-- Kết quả mẫu:
+Nhãn tham chiếu dưới đây do người dùng cung cấp. Đây là mười ảnh đã được gán nhãn, không phải mẫu ngẫu nhiên từ toàn bộ tập ảnh. Đánh giá ở mức “có phát hiện đúng lớp mong đợi trong ảnh”; hiện chưa có bounding-box chuẩn để tính mAP hoặc đánh giá vị trí khung.
 
-| Ảnh | Số box | Nhãn model trả về |
-|---|---:|---|
-| `image_0001.jpg` | 0 | Không phát hiện |
-| `image_0363.jpg` | 1 | Metal |
-| `image_0726.jpg` | 2 | Plastic, Plastic |
-| `image_1089.jpg` | 1 | Metal |
-| `image_1452.jpg` | 1 | Paper |
-| `image_1814.jpg` | 1 | Paper |
-| `image_2177.jpeg` | 2 | Paper, Waste |
-| `image_2540.jpg` | 1 | Plastic |
-| `image_2903.jpg` | 5 | Plastic, Plastic, Metal, Plastic, Plastic |
-| `image_3266.jpg` | 2 | Plastic, Plastic |
+| Ảnh | Nhãn chuẩn | Kết quả YOLO (`imgsz=640`, `conf=0.25`) | Đúng lớp |
+|---|---|---|---|
+| `image_0001.jpg` | Glass | Không phát hiện | Không |
+| `image_0363.jpg` | Glass | Metal | Không |
+| `image_0726.jpg` | Plastic | Plastic, Plastic | Có |
+| `image_1089.jpg` | Metal | Metal | Có |
+| `image_1452.jpg` | Paper | Paper | Có |
+| `image_1814.jpg` | Paper | Paper | Có |
+| `image_2177.jpeg` | Paper | Paper, Paper | Có |
+| `image_2540.jpg` | Plastic | Plastic | Có |
+| `image_2903.jpg` | Plastic | Plastic, Plastic, Metal, Plastic, Plastic | Có, kèm một lớp phụ sai |
+| `image_3266.jpg` | Plastic | Plastic | Có |
 
-- Tổng cộng notebook đã ghi 16 detection. Sau lần chạy đầu làm nóng model (khoảng 3,7 giây), các mẫu còn lại mất khoảng 0,15–0,28 giây mỗi ảnh trên máy hiện tại. Đây là thời gian đo cho mẫu nhỏ trên CPU, không phải benchmark toàn bộ tập.
-- Tạo được 10 ảnh có bbox, `results/visualizations/detection_grid.png` và `results/visualizations/detection_summary.csv`.
-- Kết quả dự đoán chưa thể dùng để tính độ chính xác hoặc kết luận ảnh nào bị nhận sai/bỏ sót vì thư mục hiện không có nhãn chuẩn đối chiếu. Ảnh `image_0001.jpg` không có box cũng chưa đủ căn cứ kết luận model bỏ sót.
+- Có lớp đúng trong **8/10 ảnh (80%)**.
+- **7/10 ảnh** chỉ có detection thuộc lớp mong đợi; ảnh `image_2903.jpg` có thêm detection `Metal`.
+- Hai trường hợp sai chính: bỏ sót ảnh Glass `image_0001.jpg`, và phân loại ảnh Glass `image_0363.jpg` thành Metal.
 
-## Thư viện và phiên bản
+### So sánh cấu hình suy luận
 
-Các import bên ngoài trong source/notebook/test và phiên bản có trong môi trường đã kiểm tra:
+Đã chạy trực tiếp YOLO trên ảnh gốc với các cấu hình dưới đây, không thay đổi trọng số:
 
-| Package (pip) | Phiên bản | Vai trò |
-|---|---:|---|
-| `numpy` | 2.1.3 | Mảng ảnh và xử lý letterbox |
-| `ultralytics` | 8.4.183 | Nạp và chạy YOLO |
-| `opencv-python` | 5.0.0.93 | Đọc ảnh/vẽ bbox trong notebook (`cv2.__version__` hiển thị 5.0.0) |
-| `matplotlib` | 3.10.0 | Hiển thị và lưu biểu đồ ảnh |
-| `ipykernel` | 7.3.0 | Kernel chạy notebook trong VS Code/Jupyter |
-| `pytest` | 9.1.1 | Chạy lệnh test theo hướng dẫn |
+| `imgsz` | `conf` | Ảnh có lớp chuẩn được phát hiện | Chỉ có lớp chuẩn |
+|---:|---:|---:|---:|
+| 640 | 0.25 | 8/10 | 7/10 |
+| 960 | 0.25 | 7/10 | 4/10 |
+| 960 | 0.15 | 8/10 | 4/10 |
 
-Model YOLO hiện dùng `torch 2.14.0+cpu` và `torchvision 0.29.0+cpu` như dependency bắc cầu; CUDA không khả dụng trên môi trường chạy hiện tại. Các package bắc cầu khác được pip cài theo metadata của `ultralytics`. `requirements.txt` ghim các dependency trực tiếp của dự án, không sao chép toàn bộ package không liên quan trong Python environment.
+Trên mẫu nhỏ này, `640/0.25` cho ít detection sai lớp phụ hơn; vì vậy đây là cấu hình mặc định hiện tại. Kết quả 10 ảnh chưa đủ để khẳng định cấu hình tối ưu cho dữ liệu nói chung.
 
-## Vướng mắc và giới hạn
+## Chạy tự động từ Windows CMD
 
-1. Ban đầu thiếu `pytest`; đã cài bằng pip, sau đó cài/kiểm tra thành công bằng `python -m pip install -r requirements.txt`.
-2. Môi trường Python 3.13.7 dùng chung còn các xung đột không thuộc dependency dự án; `pip check` vẫn báo `alembic` và `optuna` thiếu `sqlalchemy`, và `autoviz` yêu cầu `xgboost <1.7` trong khi môi trường có `xgboost 3.1.2`. Không tự cài/sửa các gói ngoài phạm vi.
-3. Công cụ chạy cell trực tiếp trong VS Code báo không tìm thấy đường dẫn notebook dù file đã có trên đĩa. Đã xác minh JSON và thực thi toàn bộ source code cell bằng Python; inference, CSV và ảnh grid được tạo thành công. Lần thực thi kiểm tra dùng backend Matplotlib không tương tác nên cảnh báo `plt.show()` không hiển thị inline trong lần đó; ảnh grid đã lưu để xem trực tiếp. Khi mở trong VS Code/Jupyter, có thể chạy lần lượt các cell để hiện biểu đồ tương tác.
-4. Phạm vi dự án mô tả bốn lớp, nhưng model trả cả `Waste`. Hiện detector và notebook giữ nguyên nhãn model, không âm thầm loại lớp; cần nhóm quyết định có tính `Waste` vào đầu ra hay không.
-5. `models/README.md` ghi `best.pt` nhưng file thật là `models/best_model.pt`; phần triển khai dùng đường dẫn file đang tồn tại.
-6. Worktree có một số thay đổi khác ngoài phạm vi xuất hiện trong lần kiểm tra cuối (`Data/README.md`, `Data/test_images/automatic_rename.py`, `data/test_images/auto_rename.py`, `abcxyz.md`). Tôi không chỉnh sửa hay khôi phục các đường dẫn này.
+Từ CMD, vào thư mục dự án rồi chạy:
 
-## Lệnh kiểm tra và cách chạy lại
-
-```powershell
-python -m pip install -r requirements.txt
-python -m pytest tests/test_detector.py
+```bat
+run.bat
 ```
 
-Mở `visualize_detections.ipynb` trong VS Code, chạy các cell từ trên xuống. Có thể chỉnh `MAX_IMAGES` để tăng/giảm số ảnh mẫu. Hiện notebook giới hạn 10 ảnh nhằm tạo kết quả nhanh; chạy nhiều ảnh hơn sẽ tăng thời gian xử lý tương ứng.
+Lệnh mặc định chọn ngẫu nhiên tối đa 10 ảnh với seed mới mỗi lần chạy, chạy YOLO trên ảnh gốc, lưu CSV và ảnh đã vẽ bounding box vào một thư mục có thời gian chạy riêng trong `results/automatic_run/`. Chương trình in seed đã dùng ở cuối để bạn có thể chạy lại đúng mẫu đó.
 
-## Đề xuất bước tiếp theo
+Các tùy chọn:
 
-1. Xác nhận quy tắc xử lý nhãn `Waste` và cập nhật README model cho đúng tên file.
-2. Đánh dấu/chuẩn bị nhãn chuẩn cho một tập kiểm thử, rồi ghi lại false positive/false negative; không suy luận lỗi chỉ từ confidence hoặc kết quả rỗng.
-3. Sau khi kiểm tra mẫu 10 ảnh, tăng số lượng mẫu hoặc chạy đủ 3.266 ảnh nếu cần thống kê; ghi nhận phần cứng và thời gian để kết quả có thể so sánh.
-4. Nếu cần sử dụng model trong ứng dụng, bổ sung bước chuyển bbox từ khung letterbox về tọa độ ảnh gốc; notebook hiện vẽ bbox trên khung 640×640 đã xử lý để đảm bảo tọa độ hiển thị đúng.
+```bat
+run.bat --reference
+run.bat --limit 25 --seed 123
+run.bat --all
+```
+
+- `--reference`: chạy đúng 10 ảnh có nhãn người dùng cung cấp để kiểm tra tỷ lệ đúng lớp.
+- `--limit N --seed S`: chạy một mẫu ngẫu nhiên có thể lặp lại. Nếu bỏ `--seed`, mỗi lần chạy sẽ chọn mẫu mới.
+- `--all`: chạy toàn bộ ảnh trong `data/test_images/`; không lưu ảnh đã vẽ cho toàn bộ tập để tránh tạo hàng nghìn file. CSV vẫn được lưu.
+- Có thể thêm `--save-images` để lưu ảnh đã vẽ trong chế độ `--all`.
+
+Kết quả của lần chạy kiểm tra tham chiếu gần nhất:
+
+- CSV: `results/automatic_run/20261022_230837/detection_summary.csv`
+- Ảnh kết quả: `results/automatic_run/20261022_230837/annotated_images/`
+- Thời gian inference: `6.61 giây` cho 10 ảnh, gồm khoảng `4.76 giây` khởi động model ở ảnh đầu; các ảnh sau khoảng `0.15–0.26 giây/ảnh` trên môi trường hiện tại.
+
+Nếu chưa có môi trường `.venv` trong thư mục dự án, cài dependency trước bằng `python -m pip install -r requirements.txt`. Launcher tự ưu tiên `.venv\Scripts\python.exe`, nếu chưa có thì gọi Python Launcher `py`.
+
+## Kiểm thử phần mềm
+
+```bat
+python -m pytest tests\test_detector.py
+```
+
+Kết quả sau khi cập nhật detector: **9 tests passed**. Các test bao gồm định dạng detection, tham số `conf`/`imgsz`, giá trị tham số không hợp lệ, ảnh không có detection và thiếu model.
+
+## Giới hạn và hướng cải thiện
+
+- Không có bộ dữ liệu huấn luyện/validation kèm nhãn bounding box trong dự án. Vì vậy chưa thể huấn luyện lại hoặc đánh giá mAP một cách đáng tin cậy; không nên sửa/loại detection theo tên file hay nhãn của 10 ảnh mẫu.
+- Kết quả hiện tại chỉ đo khả năng tìm thấy nhãn vật liệu mong đợi ở cấp ảnh; không đánh giá đầy đủ số lượng vật thể, vị trí khung hoặc detection thừa.
+- Muốn tăng độ chính xác bền vững, cần bổ sung ảnh đại diện và annotation bounding box đúng cho bốn lớp mục tiêu, thống nhất cách xử lý lớp `Waste`, sau đó chia tập train/validation/test độc lập và fine-tune YOLO. Tạm thời giữ nguyên `best_model.pt`; chưa có bằng chứng để thay trọng số hay chọn ngưỡng khác.

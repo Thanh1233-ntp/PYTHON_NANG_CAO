@@ -28,10 +28,20 @@ class FakeYOLO:
         self.results: list[FakeResult] = []
         self.last_source: np.ndarray | None = None
         self.last_verbose: bool | None = None
+        self.last_confidence: float | None = None
+        self.last_image_size: int | None = None
 
-    def predict(self, source: np.ndarray, verbose: bool = True) -> list[FakeResult]:
+    def predict(
+        self,
+        source: np.ndarray,
+        conf: float = 0.25,
+        imgsz: int = 640,
+        verbose: bool = True,
+    ) -> list[FakeResult]:
         self.last_source = source
         self.last_verbose = verbose
+        self.last_confidence = conf
+        self.last_image_size = imgsz
         return self.results
 
 class ImageProcessorTests(unittest.TestCase):
@@ -104,10 +114,31 @@ class TrashDetectorTests(unittest.TestCase):
             ],
         )
         self.assertIsInstance(detections, list)
+        self.assertEqual(self.detector.model.last_confidence, 0.25)
+        self.assertEqual(self.detector.model.last_image_size, 640)
         for detection in detections:
             self.assertEqual(set(detection), {"class_name", "confidence", "bbox"})
             self.assertIsInstance(detection["confidence"], float)
             self.assertEqual(len(detection["bbox"]), 4)
+
+    def test_predict_uses_custom_confidence_and_image_size(self) -> None:
+        detector = TrashDetector(
+            str(self.model_path), confidence_threshold=0.4, image_size=960
+        )
+
+        detector.detect(np.zeros((64, 64, 3)))
+
+        self.assertEqual(detector.model.last_confidence, 0.4)
+        self.assertEqual(detector.model.last_image_size, 960)
+
+    def test_rejects_invalid_inference_settings(self) -> None:
+        for kwargs in (
+            {"confidence_threshold": -0.1},
+            {"confidence_threshold": 1.1},
+            {"image_size": 0},
+        ):
+            with self.subTest(kwargs=kwargs), self.assertRaises(ValueError):
+                TrashDetector(str(self.model_path), **kwargs)
 
     def test_detect_returns_empty_list_when_no_boxes_are_found(self) -> None:
         self.detector.model.results = [FakeResult([])]

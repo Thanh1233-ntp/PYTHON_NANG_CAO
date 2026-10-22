@@ -2,7 +2,17 @@ from pathlib import Path
 from typing import Any
 
 class TrashDetector:
-    def __init__(self, model_path: str) -> None:
+    def __init__(
+        self,
+        model_path: str,
+        confidence_threshold: float = 0.25,
+        image_size: int = 640,
+    ) -> None:
+        if not 0.0 <= confidence_threshold <= 1.0:
+            raise ValueError("confidence_threshold must be between 0 and 1.")
+        if image_size <= 0:
+            raise ValueError("image_size must be greater than 0.")
+
         path = Path(model_path).expanduser()
         if not path.is_file():
             raise FileNotFoundError(f"YOLO model file was not found: {path}")
@@ -15,9 +25,16 @@ class TrashDetector:
             ) from error
 
         self.model: Any = YOLO(str(path))
+        self.confidence_threshold = confidence_threshold
+        self.image_size = image_size
 
     def detect(self, image: Any) -> list[dict[str, Any]]:
-        results = self.model.predict(source=image, verbose=False)
+        results = self.model.predict(
+            source=image,
+            conf=self.confidence_threshold,
+            imgsz=self.image_size,
+            verbose=False,
+        )
         if results is None:
             return []
 

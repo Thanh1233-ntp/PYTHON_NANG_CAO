@@ -1,0 +1,2 @@
+﻿image,expected_class,predicted_classes,expected_class_detected,detection_count,confidences,processing_seconds,annotated_image
+image_2620.jpg,,Plastic,,1,0.8797,4.5908,annotated_image_2620.jpg

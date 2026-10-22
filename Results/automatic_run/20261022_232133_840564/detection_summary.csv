@@ -1,0 +1,11 @@
+﻿image,expected_class,predicted_classes,expected_class_detected,detection_count,confidences,processing_seconds,annotated_image
+image_2620.jpg,,Plastic,,1,0.8797,3.1269,annotated_image_2620.jpg
+image_0457.jpg,,Metal,,1,0.6861,0.0710,annotated_image_0457.jpg
+image_0103.jpg,,Metal; Paper,,2,0.3758; 0.3464,0.0762,annotated_image_0103.jpg
+image_3038.jpg,,Metal; Plastic,,2,0.5906; 0.5103,0.1146,annotated_image_3038.jpg
+image_1127.jpg,,Metal,,1,0.9207,0.0769,annotated_image_1127.jpg
+image_1004.jpg,,Metal,,1,0.9851,0.0851,annotated_image_1004.jpg
+image_0915.jpg,,Metal,,1,0.9684,0.1043,annotated_image_0915.jpg
+image_0572.jpg,,Plastic; Plastic; Metal; Plastic,,4,0.4778; 0.4580; 0.3809; 0.2692,0.1501,annotated_image_0572.jpg
+image_3017.jpg,,Plastic; Plastic,,2,0.6887; 0.4393,0.1470,annotated_image_3017.jpg
+image_0420.jpg,,Paper; Metal,,2,0.5244; 0.4283,0.0768,annotated_image_0420.jpg
