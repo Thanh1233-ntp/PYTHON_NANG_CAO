@@ -1,0 +1,11 @@
+# Thư viện cốt lõi để xử lý ảnh và chạy YOLO
+numpy==2.1.3
+ultralytics==8.4.183
+
+# Hiển thị kết quả trong notebook và đọc ảnh
+opencv-python==5.0.0.93
+matplotlib==3.10.0
+ipykernel==7.3.0
+
+# Chạy kiểm thử
+pytest==9.1.1

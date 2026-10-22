@@ -8,7 +8,7 @@ Bộ dữ liệu có tổng cộng 3.266 bức ảnh về nhiều loại rác kh
 ├── data/
    ├── README.md
    └── test_images/
-       ├── automatic_rename.py
+       ├── auto_rename.py
        ├── image_0001.jpg
        ├── image_0002.jpg
        ├── image_0003.jpeg
